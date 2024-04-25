@@ -1,41 +1,36 @@
-# .NET core 8 LTS Console App template
+# Service Bus Queue Reader Console App
 
 ## Overview
 
-The .NET Console App template:
+This .NET Console App performs a very simple task:
 
-- From Visual Studio:
+- Using a Connection String to an Azure Service Bus Queue,
 
-![Visual Studio 2022 Console App project template](/img/ConsoleApp.png)
+- It Receives all the messages in the Queue and displays them in the Console.
 
-- Or command-line:
+> Notes:
+>
+> - The Connection String:
+>
+>   - must be set in the `appsettings.json` file.
+>
+>   - Should be created at the Queue level, as a Shared Access Policy, with only the `Listen` permission:
+>     - Creation
+>     ![Listen SAS Policy creation](./img/create-queue-listen-sas.jpg)
+>
+>     - Connection String retrieval
+>     ![Listen SAS Policy Connection String](./img/listen-sas-connection-string.jpg)
 
-`dotnet new console --framework net8.0 --use-program-main`
+## Additional information
 
-generates a very basic Console App.
+- The code uses SEQ ([Seq.Extensions.Logging NuGet package](https://www.nuget.org/packages/seq.extensions.logging)). This can be removed easily.
 
-The template lacks important and useful features:
+- The Messages are:
+  - `Received`: meaning they are counted as `delivered` (it increments their `DeliveryCount`),
+  - Then `Abandoned` right away, so their lock is removed, meaning they can be picked up by another reader right away.
 
-- [Logging](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-6.0),
-- [Configuration / Application settings](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0),
-- Separation of "doing something (modules/pluging/interfaces)" from "launching the program (core)", which is close to a [Microkernel architecture pattern](https://en.wikipedia.org/wiki/Microkernel.net),
-- [Dependency Injection](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) (for adaptive coding and unit test capabilities),
-- [Asynchronous programming](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/) (recommended to use with WebAPI REST calls and Cloud (Azure) resources).
+- The `Dead-lettered` messages are not received.
 
-So I created this template that adds all of these built-in.
+## References
 
-It allows me to get started fast for all my coding Proof of Concepts.
-
-Enjoy,
-
-Emmanuel.
-
-## Disclaimer
-
-It is a starting point.
-
-There are a lots of features and practices that can, and should, be added.
-
-I use `.NET 8 LTS` version. It is a personal choice, not a recommendation.
-
-This is a **WAY BETTER** starting point than the default "Console App".
+[Use Service Bus Explorer](https://learn.microsoft.com/en-us/azure/service-bus-messaging/explorer)
