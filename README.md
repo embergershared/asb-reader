@@ -8,6 +8,10 @@ This .NET Console App performs a very simple task:
 
 - It Receives all the messages in the Queue and displays them in the Console.
 
+Here is a sample result:
+
+![Console example](./img/console-example.jpg)
+
 > Notes:
 >
 > - The Connection String:
