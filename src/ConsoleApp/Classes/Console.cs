@@ -55,29 +55,27 @@ namespace ConsoleApp.Classes
 
                 _logger.LogTrace("Method end");
             }
-
             return true;
         }
 
         private static void DisplayMessages(IEnumerable<ServiceBusReceivedMessage> messages)
         {
-          ConsoleTable.PrintLine();
-          ConsoleTable.PrintRow("Seq","Id","deliveryCount","state", "Subject", "Body");
-          ConsoleTable.PrintLine();
-          foreach (var message in messages)
-          {
-            ConsoleTable.PrintRow(
-  message.SequenceNumber.ToString(),
-              message.MessageId ?? string.Empty,
-              message.DeliveryCount.ToString(),
-              message.State.ToString(),
-              message.Subject ?? string.Empty,
-              message.Body.ToString()
+            ConsoleTable.PrintLine();
+            ConsoleTable.PrintRow("Seq","Id","deliveryCount","state", "Subject", "Body");
+            ConsoleTable.PrintLine();
+            foreach (var message in messages)
+            {
+                ConsoleTable.PrintRow(
+                    message.SequenceNumber.ToString(),
+                    message.MessageId ?? string.Empty,
+                    message.DeliveryCount.ToString(),
+                    message.State.ToString(),
+                    message.Subject ?? string.Empty,
+                    message.Body.ToString()
             );
             //WriteLine($"Message: {message.Body}");
-          }
-          ConsoleTable.PrintLine();
-
+            }
+            ConsoleTable.PrintLine();
+        }
     }
-  }
 }
