@@ -16,7 +16,7 @@ Here is a sample result:
 >
 > - The Connection String:
 >
->   - must be set in the `appsettings.json` file.
+>   - must be set in the `appsettings.json`/`appsettings.*.json` file.
 >
 >   - Should be created at the Queue level, as a Shared Access Policy, with only the `Listen` permission:
 >     - Creation
@@ -30,10 +30,10 @@ Here is a sample result:
 - The code uses SEQ ([Seq.Extensions.Logging NuGet package](https://www.nuget.org/packages/seq.extensions.logging)). This can be removed easily.
 
 - The Messages are:
-  - `Received`: meaning they are counted as `delivered` (it increments their `DeliveryCount`),
+  - `Received`: meaning they are counted as `delivered` (it increments their `DeliveryCount` property),
   - Then `Abandoned` right away, so their lock is removed, meaning they can be picked up by another `receiver` or `processor` right away.
 
-- The `Dead-lettered` messages are not received.
+- The `Dead-lettered` messages are not received (in current sample code).
 
 ## References
 
