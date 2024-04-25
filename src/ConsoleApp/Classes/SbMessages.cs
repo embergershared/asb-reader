@@ -22,7 +22,7 @@ namespace ConsoleApp.Classes
     }
 
     #region Interface implementation
-    // As we use ConnectionString, we don't need to use Azure.Identity client to authenticate
+    // As we use ConnectionString, we don't use Azure.Identity client to authenticate
     async Task<IReadOnlyList<ServiceBusReceivedMessage>> ISbMessages.ListMessagesAsync(string queueConnectionString)
     {
       _logger.LogInformation("SbMessages.ListMessagesAsync() called with ConnectionString: {ConnectionString}", queueConnectionString);
@@ -39,36 +39,56 @@ namespace ConsoleApp.Classes
       var receiver = sbClient.CreateReceiver(queueName);
 
       // Receive the messages for the queue with a timeout of 5 seconds (if nothing comes, there's no messages)
-      _logger.LogDebug("Receiving messages from queue: {QueueName}, by batch of: {maxMessages}", queueName, Const.MaxMessagesToRetrieve);
-      var messages = await receiver.ReceiveMessagesAsync(Const.MaxMessagesToRetrieve, TimeSpan.FromMilliseconds(Const.MaxQueryTimeInSeconds*1000));
-
-      // Check for null
-      if (messages == null)
+      try
       {
-        _logger.LogInformation("SbMessages.ListMessagesAsync() failed to receive messages from queue: {queueName}", queueName);
+        _logger.LogDebug("Receiving messages from queue: {QueueName}, by batch of: {maxMessages}", queueName,
+          Const.MaxMessagesToRetrieve);
+        
+        var messages = await receiver.ReceiveMessagesAsync(Const.MaxMessagesToRetrieve,
+          TimeSpan.FromMilliseconds(Const.MaxQueryTimeInSeconds * 1000));
+
+        // Check for null
+        if (messages == null)
+        {
+          _logger.LogInformation("SbMessages.ListMessagesAsync() failed to receive messages from queue: {queueName}",
+            queueName);
+          return returnedValue;
+        }
+
+        // If no messages, return an empty list
+        if (!messages.Any())
+        {
+          _logger.LogInformation("SbMessages.ListMessagesAsync() didn't find any messages to return in {seconds}",
+            Const.MaxQueryTimeInSeconds);
+          return returnedValue;
+        }
+
+        _logger.LogDebug("Received: {Count} messages from queue: {queueName}", messages.Count, queueName);
+        returnedValue.AddRange(messages);
+
+        // As we have messages, we abandon them to keep them in the queue
+        foreach (var message in returnedValue)
+        {
+          await receiver.AbandonMessageAsync(message);
+        }
+
+        // Return the messages we found
+        _logger.LogInformation("SbMessages.ListMessagesAsync() returning {messagesCount} messages",
+          returnedValue.Count);
         return returnedValue;
       }
-
-
-      // If no messages, return an empty list
-      if (!messages.Any())
+      catch(Exception ex)
       {
-        _logger.LogInformation("SbMessages.ListMessagesAsync() didn't find any messages to return in {seconds}", Const.MaxQueryTimeInSeconds);
+        _logger.LogError(ex, "SbMessages.ListMessagesAsync() failed to receive messages from queue: {queueName}",
+          queueName);
         return returnedValue;
       }
-
-      _logger.LogDebug("Received: {Count} messages from queue: {queueName}", messages.Count, queueName);
-      returnedValue.AddRange(messages);
-
-      // As we have messages, abandon them to keep them in the queue
-      foreach (var message in returnedValue)
+      finally
       {
-        await receiver.AbandonMessageAsync(message);
+        // Close the receiver and the client
+        await receiver.DisposeAsync();
+        await sbClient.DisposeAsync();
       }
-
-      // Return the messages we found
-      _logger.LogInformation("SbMessages.ListMessagesAsync() returning {messagesCount} messages", returnedValue.Count);
-      return returnedValue;
     }
     #endregion
 

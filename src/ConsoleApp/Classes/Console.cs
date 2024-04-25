@@ -16,19 +16,16 @@ namespace ConsoleApp.Classes
     {
         private readonly ILogger<Console> _logger;
         private readonly IConfiguration _config;
-        //private readonly IShowInfos _showInfos;
         private readonly ISbMessages _sbMessages;
 
         public Console(
             ILogger<Console> logger,
             IConfiguration config,
             ISbMessages sbMessages
-            //IShowInfos showInfos
         )
         {
             _logger = logger;
             _config = config;
-            //_showInfos = showInfos;
             _sbMessages = sbMessages;
         }
 
