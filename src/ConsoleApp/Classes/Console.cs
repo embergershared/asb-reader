@@ -63,6 +63,7 @@ namespace ConsoleApp.Classes
         {
           ConsoleTable.PrintLine();
           ConsoleTable.PrintRow("Seq","Id","deliveryCount","state", "Subject", "Body");
+          ConsoleTable.PrintLine();
           foreach (var message in messages)
           {
             ConsoleTable.PrintRow(
@@ -75,6 +76,8 @@ namespace ConsoleApp.Classes
             );
             //WriteLine($"Message: {message.Body}");
           }
-        }
+          ConsoleTable.PrintLine();
+
     }
+  }
 }
