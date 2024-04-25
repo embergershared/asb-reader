@@ -27,10 +27,14 @@ This .NET Console App performs a very simple task:
 
 - The Messages are:
   - `Received`: meaning they are counted as `delivered` (it increments their `DeliveryCount`),
-  - Then `Abandoned` right away, so their lock is removed, meaning they can be picked up by another reader right away.
+  - Then `Abandoned` right away, so their lock is removed, meaning they can be picked up by another `receiver` or `processor` right away.
 
 - The `Dead-lettered` messages are not received.
 
 ## References
 
-[Use Service Bus Explorer](https://learn.microsoft.com/en-us/azure/service-bus-messaging/explorer)
+[Service Bus Queues](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#queues)
+
+[Service Bus Explorer](https://learn.microsoft.com/en-us/azure/service-bus-messaging/explorer)
+
+[Azure Service Bus client library for .NET](https://github.com/azure/azure-sdk-for-net/tree/main/sdk/servicebus/Azure.Messaging.ServiceBus/samples)
